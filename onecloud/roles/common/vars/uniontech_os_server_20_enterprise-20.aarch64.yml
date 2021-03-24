@@ -24,12 +24,16 @@ common_packages:
   - librbd1
   - libspice-server1
   - ntp
-  - python-selinux
-  - software-properties-common
   - openvswitch-switch
-  - wget
   - ovmf
+  - python-pymysql
+  - python-selinux
+  - python-yaml
+  - software-properties-common
+  - wget
   - yunion-climc
   - yunion-executor
   - yunion-ocadm
   - yunion-qemu-2.12.1
+
+

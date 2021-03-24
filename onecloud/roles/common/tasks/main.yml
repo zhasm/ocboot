@@ -36,16 +36,6 @@
   tags:
     - facts
 
-- name: init apt source for arm64
-  copy:
-    src: apt.sources.list
-    dest: /etc/apt/sources.list
-    owner: root
-    group: root
-    mode: "0644"
-  when:
-  - is_uos_arm64 is defined or is_debian_arm64 is defined
-
 - name: init apt sourced.list for arm64
   copy:
     src: apt.yunion.list
@@ -61,6 +51,23 @@
     sudo apt-get update -y
   when:
   - is_uos_arm64 is defined or is_debian_arm64 is defined
+
+- name: config iptables for UOS
+  shell: |
+    if iptables -V |grep -wq nf_tables && ls -l /usr/sbin/iptables |grep -wq alternatives; then
+      update-alternatives --set iptables /usr/sbin/iptables-legacy
+      update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+      update-alternatives --set arptables /usr/sbin/arptables-legacy
+      update-alternatives --set ebtables /usr/sbin/ebtables-legacy
+      if [ ! -x /usr/sbin/nft ]; then
+          aptitude install nftables -y
+      fi
+      nft flush ruleset
+    fi
+  when:
+  - is_uos_arm64 is defined
+  args:
+    executable: /bin/bash
 
 - name: install packages via loop
   package: name="{{ item }}"
