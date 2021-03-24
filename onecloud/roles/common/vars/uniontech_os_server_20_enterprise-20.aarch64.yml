@@ -32,3 +32,6 @@ common_packages:
   - yunion-executor
   - yunion-ocadm
   - yunion-qemu-2.12.1
+  - python-yaml
+  - python-pymysql
+  - python3-pip
