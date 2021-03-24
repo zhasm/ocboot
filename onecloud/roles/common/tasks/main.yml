@@ -54,7 +54,6 @@
 
 - name: config iptables for UOS
   shell: |
-    # iptables 规则。 可以放到 playbook 里。不紧急
     if iptables -V |grep -wq nf_tables && ls -l /usr/sbin/iptables |grep -wq alternatives; then
       update-alternatives --set iptables /usr/sbin/iptables-legacy
       update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
@@ -63,10 +62,12 @@
       if [ ! -x /usr/sbin/nft ]; then
           aptitude install nftables -y
       fi
-    nft flush ruleset
-  fi
+      nft flush ruleset
+    fi
   when:
   - is_uos_arm64 is defined
+  args:
+    executable: /bin/bash
 
 - name: install packages via loop
   package: name="{{ item }}"

@@ -39,6 +39,8 @@
       sed -i 's#bind-address *= *127.0.0.1#bind-address = 0.0.0.0#' /etc/mysql/mariadb.conf.d/50-server.cnf
     fi
     systemctl restart mariadb
+  args:
+    executable: /bin/bash
 
 - name: Change root password
   mysql_user:
@@ -57,6 +59,8 @@
     else
       mysql -u "{{ db_user }}" -p"{{ db_password }}" -h "{{ db_host }}" -e 'grant all privileges on *.* to `{{ db_user }}`@`%` identified by "{{ db_password }}" with grant option; FLUSH PRIVILEGES;'
     fi
+  args:
+    executable: /bin/bash
 
 - name: Remove all anonymous user accounts
   mysql_user:
