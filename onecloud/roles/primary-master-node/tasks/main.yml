@@ -56,7 +56,7 @@
   changed_when: '"Image is up to date" not in command_result.stdout or "Already exists" not in command_result.stdout'
   when:
   - K8S_TOKEN.stdout|length == 0
-  - is_uos_arm64 is defined
+  - is_uos_arm64 is defined or is_debian_arm64 is defined
 
 - name: Check node is init
   shell: test -f /etc/kubernetes/kubelet.conf
@@ -228,15 +228,15 @@
 
 - name: "Check onecloud user {{ onecloud_user }} exists"
   shell: |
-    eval $(/opt/yunion/bin/ocadm cluster rcadmin)
+    source ~/.onecloud_rcadmin
     /opt/yunion/bin/climc user-list | grep -w {{ onecloud_user }} | wc -l
   register: OC_USER_COUNT
   ignore_errors: yes
 
 - name: "Create onecloud web login user {{ onecloud_user }}"
   shell: |
-   eval $(/opt/yunion/bin/ocadm cluster rcadmin)
-   /opt/yunion/bin/climc user-create --password {{ onecloud_user_password }} --enabled {{ onecloud_user }}
+    source ~/.onecloud_rcadmin
+    /opt/yunion/bin/climc user-create --password {{ onecloud_user_password }} --enabled {{ onecloud_user }}
   ignore_errors: yes
   when:
   - OC_USER_COUNT.stdout|int == 0

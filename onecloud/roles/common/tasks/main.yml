@@ -44,7 +44,7 @@
     group: root
     mode: "0644"
   when:
-  - is_uos_arm64 is defined
+  - is_uos_arm64 is defined or is_debian_arm64 is defined
 
 - name: init apt sourced.list for arm64
   copy:
@@ -54,13 +54,13 @@
     group: root
     mode: "0644"
   when:
-  - is_uos_arm64 is defined
+  - is_uos_arm64 is defined or is_debian_arm64 is defined
 
 - name: update apt cache for arm64
   shell: |
     sudo apt-get update -y
   when:
-  - is_uos_arm64 is defined
+  - is_uos_arm64 is defined or is_debian_arm64 is defined
 
 - name: install packages via loop
   package: name="{{ item }}"

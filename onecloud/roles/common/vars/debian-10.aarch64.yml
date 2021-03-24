@@ -1,4 +1,4 @@
-is_uos_arm64: true
+is_debian_arm64: true
 
 common_packages:
   - apt-transport-https
@@ -21,6 +21,8 @@ common_packages:
   - kubeadm=1.15.8-00 #
   - kubectl=1.15.8-00 #
   - kubelet=1.15.8-00 #
+  - libusb-1.0-0
+  - libusbredirparser1
   - librbd1
   - libspice-server1
   - ntp
