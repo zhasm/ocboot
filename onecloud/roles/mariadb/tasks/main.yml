@@ -39,8 +39,6 @@
       sed -i 's#bind-address *= *127.0.0.1#bind-address = 0.0.0.0#' /etc/mysql/mariadb.conf.d/50-server.cnf
     fi
     systemctl restart mariadb
-  when: is_uos_arm64 is defined
-
 
 - name: Change root password
   mysql_user:
@@ -50,15 +48,15 @@
   changed_when: false
   failed_when: false
 
-- name:  Allow remote root access with grant priv
-  mysql_user:
-    name: "{{ db_user }}"
-    host: "%"
-    password: "{{ db_password }}"
-    priv: "*.*:ALL,GRANT"
-    state: present
-    login_user: "{{ db_user }}"
-    login_password: "{{ db_password }}"
+- name: Allow remote root access with grant priv with raw mysql
+  shell: |
+    default_ip=$(ip route get 1 | head -n 1 | awk '{print $7}')
+    given_ip="{{ db_host }}"
+    if [[ "$given_ip" == "$default_ip" ]] || [[ "$given_ip" == 127.* ]]; then
+      mysql -u "{{ db_user }}" -p"{{ db_password }}" -e 'grant all privileges on *.* to `{{ db_user }}`@`%` identified by "{{ db_password }}" with grant option; FLUSH PRIVILEGES;'
+    else
+      mysql -u "{{ db_user }}" -p"{{ db_password }}" -h "{{ db_host }}" -e 'grant all privileges on *.* to `{{ db_user }}`@`%` identified by "{{ db_password }}" with grant option; FLUSH PRIVILEGES;'
+    fi
 
 - name: Remove all anonymous user accounts
   mysql_user:
