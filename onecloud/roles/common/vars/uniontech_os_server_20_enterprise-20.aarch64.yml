@@ -29,11 +29,11 @@ common_packages:
   - python-pymysql
   - python-selinux
   - python-yaml
+  - python3-pip
   - software-properties-common
   - wget
   - yunion-climc
   - yunion-executor
   - yunion-ocadm
   - yunion-qemu-2.12.1
-
-
+  

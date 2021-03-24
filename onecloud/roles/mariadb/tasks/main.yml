@@ -15,7 +15,7 @@
   package:
     name: python-mysqldb
     state: present
-  when: ansible_os_family == "Uniontech OS Server 20 Enterprise" or ansible_os_family == "Debian"
+  when: ansible_os_family == "Uniontech OS Server 20 Enterprise"
 
 - name: Copy my.cnf
   copy:
