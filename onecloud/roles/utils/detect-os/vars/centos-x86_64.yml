@@ -15,11 +15,7 @@ common_packages:
     - celt051
     - ceph-common
     - conntrack-tools
-    - container-selinux
-    - containerd.io
-    - cri-tools
     - curl
-    - docker-ce
     - fuse
     - fuse-devel
     - fuse-libs
@@ -31,10 +27,6 @@ common_packages:
     - keyutils
     - kmod
     - kmod-openvswitch
-    - kubeadm-1.15.12-0
-    - kubectl-1.15.12-0
-    - kubelet-1.15.12-0
-    - kubernetes-cni
     - libaio
     - libbasicobjects
     - libcollection
@@ -87,3 +79,10 @@ common_services:
     - ntpd
     - yunion-executor
 
+latest_packages:
+    - ca-certificates
+    - yunion-climc
+    - yunion-climc-ee
+    - yunion-executor
+    - yunion-fetcherfs
+    - yunion-ovmfrpm
