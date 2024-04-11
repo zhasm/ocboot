@@ -2,7 +2,7 @@
 
 set -e
 
-get_cluster_cmd='k3s kubectl get oc -n onecloud default'
+get_cluster_cmd='{{K3S_CMDLINE_PREFIX}} kubectl get oc -n onecloud default'
 
 endpoint=$($get_cluster_cmd -o jsonpath='{.spec.loadBalancerEndpoint}')
 keystone_port=$($get_cluster_cmd -o jsonpath='{.spec.keystone.adminService.nodePort}')

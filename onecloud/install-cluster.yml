@@ -26,12 +26,10 @@
   roles:
     - registry
 
-- hosts: primary_master_node
+- hosts: primary_master_node k8s
   roles:
-    - primary-master-node/setup_k3s
+    - primary-master-node/setup_kubernetes
     - restore/add-sync-user
-  tags:
-    - k3s
 
 - hosts: master_nodes
   roles:

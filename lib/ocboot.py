@@ -9,7 +9,8 @@ from lib import k3s
 from . import ansible
 from . import utils
 from . import consts
-
+from .color import RB as Red
+from .k3s import is_using_k3s
 
 GROUP_MARIADB_NODE = "mariadb_node"
 GROUP_MARIADB_HA_NODES = "mariadb_ha_nodes"
@@ -29,6 +30,7 @@ KEY_AS_HOST = 'as_host'
 KEY_AS_HOST_ON_VM = 'as_host_on_vm'
 KEY_EXTRA_PACKAGES = 'extra_packages'
 
+KEY_K8S_OR_K3S = 'k8s_or_k3s'
 KEY_K3S_API_ENDPOINT = "api_endpoint"
 KEY_K3S_API_PORT = "api_port"
 KEY_K3S_AIRGAP_DIR = "airgap_dir"
@@ -43,7 +45,7 @@ KEY_STACK_CMP = 'CMP'
 KEY_STACK_LIST = [KEY_STACK_FULLSTACK, KEY_STACK_EDGE, KEY_STACK_CMP]
 
 KEY_USER_DNS = 'user_dns'
-
+K3S_CMDLINE_PREFIX = 'K3S_CMDLINE_PREFIX'
 
 def load_config(config_file):
     import yaml
@@ -53,6 +55,7 @@ def load_config(config_file):
 
 
 def get_ansible_global_vars(version):
+    _is_using_k3s = is_using_k3s()
     major_version = utils.get_major_version(version)
     vars = {
         KEY_ONECLOUD_VERSION: version,
@@ -61,6 +64,8 @@ def get_ansible_global_vars(version):
         KEY_K3S_VERSION: VAL_K3S_VERSION,
         KEY_K3S_AIRGAP_DIR: k3s.GET_AIRGAP_DIR(),
         KEY_K3S_TOKEN: VAL_K3S_TOKEN,
+        KEY_K8S_OR_K3S: 'k3s' if _is_using_k3s else 'k8s',      # for path, eg: utils/k8s/kubelet or utils/k3s/kubelet,
+        K3S_CMDLINE_PREFIX: 'k3s' if _is_using_k3s else '',     # for commandline prefix, eg: k3s kubexxx
     }
 
     # set yunion_qemu_package for pre released version
@@ -391,12 +396,12 @@ class OnecloudConfig(object):
         self.high_availability_vip = None
         self.keepalived_version_tag = None
         self.keepalived_password = None
+        default_keepalived_version_tag = 'v2.0.28' if is_using_k3s() else 'v2.0.25'
         if self.high_availability:
             self.high_availability_vip = self.controlplane_host
-            self.keepalived_version_tag = config.get('keepalived_version_tag', 'v2.0.28')
             self.keepalived_password = base64.b64encode(self.high_availability_vip.encode('ascii'))[0:8].decode()
             self.keepalived_router_id = int(self.high_availability_vip.replace('.', '')) % 255
-
+            self.keepalived_version_tag = config.get('keepalived_version_tag', default_keepalived_version_tag)
         self.iso_install_mode = config.get('iso_install_mode', False)
         self.enable_eip_man = config.get('enable_eip_man', False)
         self.offline_deploy = config.get('offline_deploy', False) or os.environ.get('OFFLINE_DEPLOY') == 'true'
