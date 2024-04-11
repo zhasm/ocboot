@@ -3,7 +3,8 @@
     cat > /etc/yum.repos.d/yunion.repo <<EOF_MISC
     [yunion-repo-base]
     name=Packages for Yunion Multi-Cloud Platform -
-    baseurl=https://iso.yunion.cn/{{ ansible_distribution| replace(' ','') | lower }}/{{ ansible_distribution_version }}/base/{{ ansible_architecture }}
+    # baseurl=https://iso.yunion.cn/{{ ansible_distribution| replace(' ','') | lower }}/{{ ansible_distribution_version }}/base/{{ ansible_architecture }}
+    baseurl=http://10.168.26.244:9999/
     sslverify=0
     failovermethod=priority
     enabled=1

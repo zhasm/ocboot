@@ -39,6 +39,7 @@ if is_ocboot_subcmd $1; then
 fi
 
 buildah run -t \
+    --net=host \
     -v "$HOME/.ssh:/root/.ssh" \
     -v "$(pwd):/ocboot" \
     -v "$(pwd)/airgap_assets/k3s-install.sh:/airgap_assets/k3s-install.sh:ro" \

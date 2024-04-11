@@ -3,7 +3,6 @@ import hashlib
 
 from lib.cmd import run_cmd
 
-
 def GET_AIRGAP_DIR():
     default_dir = os.path.join(os.getcwd(), "airgap_assets")
     if os.environ.get('K3S_AIRGAP_DIR', None):
@@ -51,11 +50,23 @@ def download_asset(dest_dir, k3s_version, asset_url):
             print(f"{target_path}'s sha256 checksum {exists_checksum} != {expect_checksum}, redownload it.")
     run_cmd(f'curl -L {asset_url} > {target_path}', no_strip=True, realtime_output=True)
 
+def is_using_k3s():
+    ret = os.environ.get('K3S') == 'TRUE'
+    return ret
 
 def init_airgap_assets(dest_dir, k3s_version):
+    # usage: K3S_URL_PREFIX=http://LOCAL_k3s_host_url
+    # in order to speed up testing.
+    if not is_using_k3s():
+        return
+
+    K3S_URL_PREFIX = os.environ.get('K3S_URL_PREFIX', 'https://github.com/k3s-io/k3s/releases/download/v1.28.5%2Bk3s1')
+    from .color import RB
+    print(RB(f'k3s_url_prefix: {K3S_URL_PREFIX}'))
+
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
-    download_asset(dest_dir, k3s_version, 'https://github.com/k3s-io/k3s/releases/download/v1.28.5%2Bk3s1/k3s')
-    download_asset(dest_dir, k3s_version, 'https://github.com/k3s-io/k3s/releases/download/v1.28.5%2Bk3s1/k3s-arm64')
-    download_asset(dest_dir, k3s_version, 'https://github.com/k3s-io/k3s/releases/download/v1.28.5%2Bk3s1/k3s-airgap-images-amd64.tar.zst')
-    # download_asset(dest_dir, k3s_version, 'https://github.com/k3s-io/k3s/releases/download/v1.28.5%2Bk3s1/k3s-airgap-images-arm64.tar.zst')
+    download_asset(dest_dir, k3s_version, f'{K3S_URL_PREFIX}/k3s')
+    download_asset(dest_dir, k3s_version, f'{K3S_URL_PREFIX}/k3s-arm64')
+    download_asset(dest_dir, k3s_version, f'{K3S_URL_PREFIX}/k3s-airgap-images-arm64.tar.zst')
+

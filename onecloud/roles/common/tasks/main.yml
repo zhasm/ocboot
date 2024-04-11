@@ -28,9 +28,11 @@
     paths:
     - os
 
-# - name: Binary version check
-#   include_role:
-#     name: utils/bin-version-check
+- name: Binary version check
+  include_role:
+    name: utils/bin-version-check
+  when:
+  - K3S_CMDLINE_PREFIX | default('') | length == 0
 
 - name: reset iptables rules
   shell: |
@@ -178,6 +180,13 @@
 - name: kernel module config
   include_role:
     name: utils/kernel-modules
+
+# added to "k8s_docker.yml"
+
+- name: include k8s docker if needed
+  include_tasks: "k8s_docker.yml"
+  when:
+  - k8s_or_k3s == 'k8s'
 
 - name: Export cloud bin path in /etc/profile
   lineinfile:
