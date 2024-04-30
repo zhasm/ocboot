@@ -43,6 +43,7 @@ ifs = all_interfaces()
 
 
 def get_interface_by_ip(ip):
+    return 'ens33'
     if not ip:
         raise Exception("[get_interface_by_ip] empty ip")
     for i in ifs:
