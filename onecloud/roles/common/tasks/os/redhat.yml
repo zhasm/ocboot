@@ -14,6 +14,8 @@
   - extra_packages is defined
   - common_packages is defined
 
+- debug: var=common_packages
+
 - name: Install Common Packages Via Loop
   package:
     name: "{{ package_item }}"

@@ -3,7 +3,7 @@ is_redhat_based: true
 is_centos_based: true
 
 common_packages:
-    - autogen-libopts
+  # - autogen-libopts
     - bash-completion
     - boost-iostreams
     - boost-random
@@ -57,7 +57,7 @@ common_packages:
     - openvswitch2.15
     - parallel
     - pciutils
-    - python36
+  #    - python36
     - quota
     - quota-nls
     - rpcbind
@@ -75,11 +75,11 @@ common_services:
     - chronyd
     - yunion-executor
 
-dnf_modules:
-    - container-tools
-    - perl:5.26
-    - perl-libwww-perl:6.34
-    - perl-IO-Socket-SSL:2.066
-    - virt:rhel
-    - python36:3.6
+    # dnf_modules:
+  #    - container-tools
+  #    - perl:5.26
+  #    - perl-libwww-perl:6.34
+  #    - perl-IO-Socket-SSL:2.066
+  #    - virt:rhel
+  #    - python36:3.6
 
