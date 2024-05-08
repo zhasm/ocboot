@@ -69,4 +69,5 @@ def init_airgap_assets(dest_dir, k3s_version):
     download_asset(dest_dir, k3s_version, f'{K3S_URL_PREFIX}/k3s')
     download_asset(dest_dir, k3s_version, f'{K3S_URL_PREFIX}/k3s-arm64')
     download_asset(dest_dir, k3s_version, f'{K3S_URL_PREFIX}/k3s-airgap-images-arm64.tar.zst')
+    download_asset(dest_dir, k3s_version, f'{K3S_URL_PREFIX}/k3s-airgap-images-amd64.tar.zst')
 

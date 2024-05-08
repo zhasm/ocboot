@@ -185,4 +185,4 @@
       ansible.builtin.lineinfile:
         path: ~{{ ansible_user }}/.bashrc
         regexp: '\.\s+<\(kubectl completion bash\)'
-        line: ". <(kubectl completion bash)  # Added by k3s-ansible"
+        line: ". <({{ K3S_CMDLINE_PREFIX }} kubectl completion bash)  # Added by k3s-ansible"
