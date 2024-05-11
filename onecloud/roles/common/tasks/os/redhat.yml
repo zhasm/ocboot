@@ -14,7 +14,11 @@
   - extra_packages is defined
   - common_packages is defined
 
-- name: Install Common Packages Via Loop
+- debug: var=common_packages
+
+# - shell: exit 1
+
+- name: Install Common Packages Via Loop RedHat {{ ansible_distribution }}
   package:
     name: "{{ package_item }}"
     disablerepo: "{{ (online_status != 'online') | ternary('*', omit) }}"

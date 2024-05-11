@@ -60,7 +60,7 @@ common_packages:
   - usbredir
   - usbutils
   - wget
-  - "{{ yunion_qemu_package }}"
+  #  - "{{ yunion_qemu_package }}"
 
 common_services:
   - yunion-executor
