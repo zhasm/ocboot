@@ -1,0 +1,100 @@
+- name: Create directory for containerd
+  file:
+    path: /root/yunion/containerd/bin
+    state: directory
+    mode: '0755'
+
+- name: Ensure /root/yunion/containerd/bin is in PATH
+  shell: echo "$PATH" | grep -q "/root/yunion/containerd/bin" || echo "export PATH=\"$PATH:/root/yunion/containerd/bin\"" >> ~/.bashrc
+  args:
+    executable: /bin/bash
+
+- name: Check ctr version
+  shell: |
+    /root/yunion/containerd/bin/containerd --version
+  register: ctr_output
+  ignore_errors: yes
+  failed_when: false
+
+- debug: var=ctr_output.stdout
+
+- name: get ctr status
+  set_fact:
+    ctr_ready: true
+  when:
+    - ctr_output.rc == 0
+
+- name: get crictl status
+  shell: crictl --version
+  register: crictl_output
+  ignore_errors: yes
+  failed_when: false
+
+- name: gather os specific variables
+  include_vars: "defaults.yml"
+
+- block:
+  - name: Download containerd package
+    ansible.builtin.get_url:
+      url: "{{ containerd_url }}"
+      dest: "/tmp/{{ containerd_package_name }}.tar.gz"
+      mode: '0644'
+
+  - name: Copy package to remote machine
+    shell: |
+      pkg=/tmp/{{ containerd_package_name }}.tar.gz
+      tar xzf $pkg -C /root/yunion/containerd && rm -rf $pkg
+      cp -fv /root/yunion/containerd/bin/ctr /usr/bin/
+      ctr --version
+    become: yes
+    args:
+      executable: /bin/bash
+    register: extract_bin
+
+  - debug: var=extract_bin.stdout_lines
+
+  when:
+  - ctr_ready | default(false) == false
+
+- block:
+  - name: Download crictl package
+    ansible.builtin.get_url:
+      url: "{{ crictl_url }}"
+      dest: "/tmp/{{ crictl_package_name }}.tar.gz"
+      mode: '0644'
+
+  - name: Copy package to remote machine
+    shell: |
+      pkg=/tmp/{{ crictl_package_name }}.tar.gz
+      tar xzf $pkg -C /usr/bin/ && rm -rf $pkg
+      crictl --version
+    become: yes
+    args:
+      executable: /bin/bash
+    register: extract_bin
+
+  - debug: var=extract_bin.stdout_lines
+
+  when:
+  - crictl_output.rc != 0
+
+- name: ensure ocnet_cni
+  shell: |
+    bin=/opt/cni/bin/{{ ocnet_cni_package_name }}
+    [[ -x "$bin" ]] && ls -lah "$bin" && exit 0
+    mkdir -p /opt/cni/bin/
+    if hash wget &>/dev/null; then
+      wget --quiet {{ ocnet_cni_url }} -O "$bin"
+    elif hash curl &>/dev/null; then
+      curl --silent {{ ocnet_cni_url }} -o "$bin"
+    fi
+    chmod a+x "$bin"
+    ls -lah "$bin"
+  register: ocnet_cni_output
+  ignore_errors: yes
+  failed_when: false
+  become: yes
+  args:
+    executable: /bin/bash
+
+- debug: var=ocnet_cni_output.stdout_lines

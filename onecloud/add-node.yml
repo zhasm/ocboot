@@ -5,6 +5,8 @@
 - hosts: worker_nodes
   roles:
     - common
+    - { role: utils/containerd, when: 'enable_containerd | default(false) == true'}
     - worker-node
+    - { role: utils/containerd, when: 'enable_containerd | default(false) == true'}
     - { role: utils/gpu-init, when: "join_as_host|default(false)" }
     - utils/kernel-check
